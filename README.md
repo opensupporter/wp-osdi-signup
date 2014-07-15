@@ -1,4 +1,4 @@
-wp-osdi-signup
+WordPress OSDI Signup Plugin
 ==============
 
 This project is co-managed by [NOI Labs](http://neworganizing.com/labs) and OSDI
