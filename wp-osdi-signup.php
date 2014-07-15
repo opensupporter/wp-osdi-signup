@@ -140,7 +140,7 @@ function osdi_request($url, $json, $api_token)
 
     curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
     #curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_CAINFO, getcwd() . "/wp-content/plugins/osdi-signup/cacert.pem");
+    curl_setopt($ch, CURLOPT_CAINFO, getcwd() . "/wp-content/plugins/wp-osdi-signup/cacert.pem");
     curl_setopt($ch, CURLOPT_HTTPHEADER, array(
         'Content-Type: application/json',
         'OSDI-API-Token: ' . $api_token));
