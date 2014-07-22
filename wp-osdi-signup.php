@@ -8,6 +8,7 @@
  * Author URI: http://osdi.io
  * License: Mozilla
  */
+error_reporting(E_ALL & ~E_NOTICE);
 
 require_once('config.php');
 // misc utilities
@@ -34,6 +35,7 @@ function osdi_init()
     if ((is_single() || is_page()) && $_POST['osdi-email']) {
 
         $signup = osdi_process_form();
+        $signup['originating_system']= $osdi_config['originating_system'];
         $status = osdi_loop($signup);
 //        $status=osdi_process_form();
         $redirect_url = $status ? $osdi_config['redirect']['success_url'] :
@@ -43,20 +45,33 @@ function osdi_init()
     }
 }
 
+function osdi_nav($obj) {
+
+    $val = $obj;
+    if ($val == null ) {
+        $val = '';
+    }
+    _log("nav");
+    _log($obj);
+    _log($val);
+    return $val;
+
+}
 function osdi_process_form()
 {
-    $given_name = $_POST['osdi-given-name'];
-    $family_name = $_POST['osdi-family-name'];
-    $email = $_POST['osdi-email'];
+    $given_name = osdi_nav($_POST['osdi-given-name']);
+    $family_name = osdi_nav($_POST['osdi-family-name']);
+    $email = osdi_nav($_POST['osdi-email']);
 
-    $postal_code = $_POST['osdi-postal-code'];
-    $address1 = $_POST['osdi-address1'];
-    $address2 = $_POST['osdi-address2'];
-    $locality = $_POST['osdi-locality'];
-    $region = $_POST['osdi-region'];
-    $phone = $_POST['osdi-phone'];
+    $postal_code = osdi_nav($_POST['osdi-postal-code']);
+    $address1 = osdi_nav($_POST['osdi-address1']);
+    $address2 = osdi_nav($_POST['osdi-address2']);
+    $locality = osdi_nav($_POST['osdi-locality']);
+    $region = osdi_nav($_POST['osdi-region']);
+    $phone = osdi_nav($_POST['osdi-phone']);
 
     $osdi_signup = array(
+        "originating_system" => "wp-osdi-signup",
         "person" => array(
             "given_name" => $given_name,
             "family_name" => $family_name,
@@ -138,6 +153,7 @@ function osdi_request($url, $json, $api_token)
     # Setup request to send json via POST.
     $payload = $json;
 
+    _log($json);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
     #curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_CAINFO, getcwd() . "/wp-content/plugins/wp-osdi-signup/cacert.pem");
