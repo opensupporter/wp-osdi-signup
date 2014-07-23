@@ -1,10 +1,8 @@
 <?php
 /**
- * Created by JetBrains PhpStorm.
- * User: Josh
- * Date: 7/12/14
- * Time: 12:08 PM
- * To change this template use File | Settings | File Templates.
+ *
+ * Author: Josh Cohen, Open Supporter Data Interface
+ *
  */
 
 

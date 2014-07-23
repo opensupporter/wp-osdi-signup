@@ -1,9 +1,10 @@
 <?php
 /**
  * Plugin Name: Open Supporter Data Interface (OSDI) Signup form
- * Plugin URI: http://osdi.io
+ * Plugin URI: https://github.com/opensupporter/wp-osdi-signup
+ *
  * Description: Allows supporter signups to go to multiple CRMs via OSDI.
- * Version: 0.1
+ * Version: 0.2
  * Author: Josh Cohen
  * Author URI: http://osdi.io
  * License: Mozilla
