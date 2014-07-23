@@ -48,6 +48,9 @@ $osdi_config = array(
         "api_token" => "<API-TOKEN>",
         "enabled" => true
     ),
+    # This can be changed to indicate which system signups are coming from, ie "XYZ website"
+    # if supported on your backend system.
+    "originating_system" => "wp-osdi-signup"
 
 );
 ?>
