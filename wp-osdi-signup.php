@@ -51,9 +51,6 @@ function osdi_nav($obj) {
     if ($val == null ) {
         $val = '';
     }
-    _log("nav");
-    _log($obj);
-    _log($val);
     return $val;
 
 }
