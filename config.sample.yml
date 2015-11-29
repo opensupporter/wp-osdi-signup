@@ -1,0 +1,18 @@
+servers:
+   - name: 'Accurate Append'
+     url: accurate_url
+     api_token: accurate_api_token
+     enabled: true
+     mode: enhancer
+
+   - name: "Action Network"
+     url: "https://actionnetwork.org/api/v2/people"
+     api_token: "APIKEY"
+     enabled: true
+     mode: store
+
+redirect:
+    success_url: "http://localhost/thank-you"
+    fail_url: "http://localhost/error"
+
+originating_system: "wp-signup-plugin"

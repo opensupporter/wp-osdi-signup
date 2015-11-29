@@ -3,37 +3,31 @@
  * Plugin Name: Open Supporter Data Interface (OSDI) Signup form
  * Plugin URI: https://github.com/opensupporter/wp-osdi-signup
  *
- * Description: Allows supporter signups to go to multiple CRMs via OSDI.
- * Version: 0.2
+ * Description: Allows supporter signups to be enhanced and go to multiple CRMs via OSDI.
+ * Version: 0.5
  * Author: Josh Cohen
- * Author URI: http://osdi.io
- * License: Mozilla
+ * Author URI: http://opensupporter.org
+ * License: MIT
  */
-error_reporting(E_ALL & ~E_NOTICE);
 
 require_once('config.php');
-// misc utilities
-if (!function_exists('_log')) {
-    function _log($message)
-    {
-        if (WP_DEBUG === true) {
-            if (is_array($message) || is_object($message)) {
-                error_log(print_r($message, true));
-            } else {
-                error_log($message);
-            }
-        }
-    }
-}
+require_once('spyc.php');
+require_once('utils.php');
+require_once('settings.php');
 
 
-add_action('template_redirect', 'osdi_init');
+
+add_action('wp_head', 'osdi_init');
+add_action( 'admin_menu', 'osdi_add_admin_menu' );
+add_action( 'admin_init', 'osdi_settings_init' );
 
 function osdi_init()
 {
     global $osdi_config;
+    $options=get_option('osdi_settings');
+    $osdi_config=spyc_load($options['osdi_textarea_field_2']);
 
-    if ((is_single() || is_page()) && $_POST['osdi-email']) {
+    if (isset($_POST['osdi-email'])) {
 
         $signup = osdi_process_form();
         $signup['originating_system']= $osdi_config['originating_system'];
@@ -41,20 +35,11 @@ function osdi_init()
 //        $status=osdi_process_form();
         $redirect_url = $status ? $osdi_config['redirect']['success_url'] :
             $osdi_config['redirect']['fail_url'];
-        _log('Redirecting to: ' . $redirect_url);
+       osdi_log('Redirecting to: ' . $redirect_url);
         wp_redirect($redirect_url);
     }
 }
 
-function osdi_nav($obj) {
-
-    $val = $obj;
-    if ($val == null ) {
-        $val = '';
-    }
-    return $val;
-
-}
 function osdi_process_form()
 {
     $given_name = osdi_nav($_POST['osdi-given-name']);
@@ -101,7 +86,48 @@ function osdi_process_form()
     return $osdi_signup;
 }
 
-function osdi_loop($signup_obj)
+
+function osdi_loop($signup)
+{
+    global $osdi_config;
+
+    $enhanced = false;
+
+
+    $servers = $osdi_config['servers'];
+
+    foreach ($servers as $server) {
+        if ($server['enabled']) {
+            $url = $server['url'];
+            $api_token = $server['api_token'];
+           osdi_log("Processing signup server " . $server['name'] . " @ " . $url);
+           osdi_log("Api token ..." . substr($api_token, -8));
+            if ( $server['data'] ) {
+                $result_obj=$server['data'];
+
+            } else {
+                $result=osdi_request($url, json_encode($signup), $api_token);
+                $result_obj=json_decode($result,true);
+            }
+            if ($server['mode'] == 'enhancer' ) {
+                #TODO clean links and mebedded
+
+                $signup['person']=MergeArrays($signup['person'],$result_obj);
+               osdi_log("merged");
+            }
+
+        }
+
+    }
+
+    # TODO
+    # check primary status and return false if it fails
+    # merge enhanced with existing to handle tagging
+    return true;
+}
+
+
+function osdi_loop_old($signup_obj)
 {
     global $osdi_config;
 
@@ -112,16 +138,16 @@ function osdi_loop($signup_obj)
     if ($enhancer['enabled']) {
         $en_url = $enhancer['url'];
         $en_api_token = $enhancer['api_token'];
-        _log("Using ehnancer " . $en_url);
+       osdi_log("Using ehnancer " . $en_url);
         $enhanced = osdi_request($en_url, $signup, $en_api_token);
         if ($enhanced != false) {
             $signup = $enhanced;
-            _log("Successful enhance, using that");
+           osdi_log("Successful enhance, using that");
         } else {
-            _log("Enhancer Error");
+           osdi_log("Enhancer Error");
         }
     } else {
-        _log("No Enhancer");
+       osdi_log("No Enhancer");
     }
 
 
@@ -131,8 +157,8 @@ function osdi_loop($signup_obj)
         if ($server['enabled']) {
             $url = $server['url'];
             $api_token = $server['api_token'];
-            _log("Processing signup server " . $server['name'] . " @ " . $url);
-            _log("Api token ..." . substr($api_token, -8));
+           osdi_log("Processing signup server " . $server['name'] . " @ " . $url);
+           osdi_log("Api token ..." . substr($api_token, -8));
             osdi_request($url, $signup, $api_token);
         }
 
@@ -151,7 +177,7 @@ function osdi_request($url, $json, $api_token)
     # Setup request to send json via POST.
     $payload = $json;
 
-    _log($json);
+   osdi_log($json);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
     #curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_CAINFO, getcwd() . "/wp-content/plugins/wp-osdi-signup/cacert.pem");
@@ -166,10 +192,10 @@ function osdi_request($url, $json, $api_token)
     $info = curl_getinfo($ch);
     $status = $info['http_code'];
 
-    _log("Status Code: " . $info['http_code']);
+   osdi_log("Status Code: " . $info['http_code']);
     if ($result == false || $status > 399) {
-        _log("ERROR Curl Status: " . curl_error($ch));
-        _log($result);
+       osdi_log("ERROR Curl Status: " . curl_error($ch));
+       osdi_log($result);
         $result = false;
 
     }
@@ -179,4 +205,22 @@ function osdi_request($url, $json, $api_token)
 
     return $result;
 }
+
+function MergeArrays($Arr1, $Arr2)
+{
+    foreach($Arr2 as $key => $Value)
+    {
+        if(array_key_exists($key, $Arr1) && is_array($Value))
+            $Arr1[$key] = MergeArrays($Arr1[$key], $Arr2[$key]);
+
+        else
+            if ($Value != "") {
+                $Arr1[$key] = $Value;
+            }
+    }
+
+    return $Arr1;
+
+}
+
 

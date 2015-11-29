@@ -10,7 +10,30 @@ Usage
 
 ## Configuration
 
-Copy and customize config.sample.php to your liking.
+Once installed, set plugin configuration to your liking.  See below for examples of the server config yaml.
+
+````
+# This config uses accurate append to enhance the data we got from the signup form and then pushes the enhanced (merged) version into Action Network
+
+servers:
+   - name: 'Accurate Append'
+     url: accurate_url
+     api_token: accurate_api_token
+     enabled: true
+     mode: enhancer
+
+   - name: "Action Network"
+     url: "https://actionnetwork.org/api/v2/people"
+     api_token: "APIKEY"
+     enabled: true
+     mode: store
+
+redirect:
+    success_url: "http://localhost/thank-you"
+    fail_url: "http://localhost/error"
+
+originating_system: "wp-signup-plugin"
+````
 
 ## Form
 Create a form on your site, styled as you wish, with the appropriately named inputs.
@@ -74,3 +97,14 @@ Create a form on your site, styled as you wish, with the appropriately named inp
 ````
 
 ## Enjoy OSDI magic
+
+License
+=======
+
+MIT
+
+Maintainers
+===========
+Josh Cohen, @joshco
+Open Supporter Data Interface
+http://opensupporter.org
