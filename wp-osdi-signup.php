@@ -35,8 +35,14 @@ function osdi_init()
 //        $status=osdi_process_form();
         $redirect_url = $status ? $osdi_config['redirect']['success_url'] :
             $osdi_config['redirect']['fail_url'];
-       osdi_log('Redirecting to: ' . $redirect_url);
-        wp_redirect($redirect_url);
+
+        if ( $redirect_url == 'none') {
+            osdi_log('No Redirect. Set to: ' . $redirect_url);
+        } else {
+            osdi_log('Redirecting to: ' . $redirect_url);
+            wp_redirect($redirect_url);
+        }
+
     }
 }
 
@@ -125,51 +131,6 @@ function osdi_loop($signup)
     # merge enhanced with existing to handle tagging
     return true;
 }
-
-
-function osdi_loop_old($signup_obj)
-{
-    global $osdi_config;
-
-    $enhanced = false;
-    $signup = json_encode($signup_obj);
-
-    $enhancer = $osdi_config['enhancer'];
-    if ($enhancer['enabled']) {
-        $en_url = $enhancer['url'];
-        $en_api_token = $enhancer['api_token'];
-       osdi_log("Using ehnancer " . $en_url);
-        $enhanced = osdi_request($en_url, $signup, $en_api_token);
-        if ($enhanced != false) {
-            $signup = $enhanced;
-           osdi_log("Successful enhance, using that");
-        } else {
-           osdi_log("Enhancer Error");
-        }
-    } else {
-       osdi_log("No Enhancer");
-    }
-
-
-    $servers = $osdi_config['servers'];
-
-    foreach ($servers as $server) {
-        if ($server['enabled']) {
-            $url = $server['url'];
-            $api_token = $server['api_token'];
-           osdi_log("Processing signup server " . $server['name'] . " @ " . $url);
-           osdi_log("Api token ..." . substr($api_token, -8));
-            osdi_request($url, $signup, $api_token);
-        }
-
-    }
-
-    # TODO
-    # check primary status and return false if it fails
-    # merge enhanced with existing to handle tagging
-    return true;
-}
-
 
 function osdi_request($url, $json, $api_token)
 {

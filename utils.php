@@ -46,7 +46,7 @@ function osdi_log_write($message) {
         file_put_contents(osdi_log_dir() . '/.htaccess', $htaccess);
     }
     $handle=fopen( osdi_log_file(),'a');
-    $entry= "[". date(DATE_RFC2822) . "] " . $message . "\n";
+    $entry= "[". date('Y-m-d H:i:s') . "] " . $message . "\n";
     fwrite($handle,$entry);
     fclose($handle);
 }
