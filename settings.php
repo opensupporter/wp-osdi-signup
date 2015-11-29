@@ -36,6 +36,7 @@ function osdi_settings_init()
         'osdi_pluginPage_section'
     );
 
+    /*
     add_settings_field(
         'osdi_text_field_0',
         __('Log File', 'osdi'),
@@ -59,7 +60,7 @@ function osdi_settings_init()
         'pluginPage',
         'osdi_pluginPage_section'
     );
-
+*/
 
 }
 
@@ -71,16 +72,6 @@ function osdi_textarea_field_2_render()
     ?>
     <textarea style='font-family: monospace' cols='80' rows='25'
               name='osdi_settings[osdi_textarea_field_2]'><?php echo $options['osdi_textarea_field_2']; ?></textarea>
-    <?php
-
-}
-
-function osdi_text_field_0_render()
-{
-
-    $options = osdi_get_options();
-    ?>
-    <input type='text' name='osdi_settings[osdi_text_field_0]' value='<?php echo $options['osdi_text_field_0']; ?>'>
     <?php
 
 }
@@ -102,6 +93,17 @@ function osdi_select_field_logging_render(  ) {
 
 }
 
+/*
+ *
+function osdi_text_field_0_render()
+{
+
+    $options = osdi_get_options();
+    ?>
+    <input type='text' name='osdi_settings[osdi_text_field_0]' value='<?php echo $options['osdi_text_field_0']; ?>'>
+    <?php
+
+}
 
 function osdi_text_field_3_render()
 {
@@ -125,7 +127,7 @@ function osdi_text_field_4_render()
 
 }
 
-
+*/
 function osdi_settings_section_callback()
 {
 
