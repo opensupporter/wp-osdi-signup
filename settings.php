@@ -85,6 +85,7 @@ function osdi_select_field_logging_render(  ) {
         <option value='Enabled' <?php selected( $options['osdi_select_field_logging'], 'Enabled' ); ?>>Enabled</option>
         <option value='Disabled' <?php selected( $options['osdi_select_field_logging'], 'Disabled' ); ?>>Disabled</option>
     </select>
+    <p>See wp-content/osdi/osdi.log</p>
     <pre><?php
         echo tailCustom(osdi_log_file(), 10);
         ?>
@@ -131,8 +132,7 @@ function osdi_text_field_4_render()
 function osdi_settings_section_callback()
 {
 
-    echo __('This section description', 'osdi');
-    osdi_log('settings page rendered');
+    echo __('Configure OSDI services', 'osdi');
 
 }
 
