@@ -112,7 +112,7 @@ function osdi_loop($signup)
                 $result_obj=$server['data'];
 
             } else {
-                $result=osdi_request($url, json_encode($signup), $api_token);
+                $result=osdi_request($url, json_encode(osdi_prune($signup)), $api_token);
                 $result_obj=json_decode($result,true);
             }
             if ($server['mode'] == 'enhancer' ) {
@@ -166,22 +166,6 @@ function osdi_request($url, $json, $api_token)
 
     return $result;
 }
-
-function MergeArrays($Arr1, $Arr2)
-{
-    foreach($Arr2 as $key => $Value)
-    {
-        if(array_key_exists($key, $Arr1) && is_array($Value))
-            $Arr1[$key] = MergeArrays($Arr1[$key], $Arr2[$key]);
-
-        else
-            if ($Value != "") {
-                $Arr1[$key] = $Value;
-            }
-    }
-
-    return $Arr1;
-
-}
+?>
 
 
