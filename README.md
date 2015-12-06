@@ -1,9 +1,11 @@
 WordPress OSDI Signup Plugin
 ==============
-
+![](osdi.square.png)
 This project is co-managed by [NOI Labs](http://neworganizing.com/labs) and OSDI
 
-WordPress OSDI signup form.  Supports insertion to multiple CRMs per submission
+WordPress OSDI signup form.  Supports insertion to multiple CRMs per submission as enhancer functionality.
+
+More information about OSDI can be found here: [opensupporter.org](http://opensupporter.org)
 
 Usage
 =====
