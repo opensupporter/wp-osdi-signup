@@ -10,22 +10,21 @@
  * License: MIT
  */
 
-require_once('config.php');
 require_once('spyc.php');
 require_once('utils.php');
-require_once('settings.php');
+if ( is_admin() ) {
 
+    require_once('settings.php');
 
+}
 
 add_action('wp_head', 'osdi_init');
-add_action( 'admin_menu', 'osdi_add_admin_menu' );
-add_action( 'admin_init', 'osdi_settings_init' );
 
 function osdi_init()
 {
     global $osdi_config;
     $options=get_option('osdi_settings');
-    $osdi_config=spyc_load($options['osdi_textarea_field_2']);
+    $osdi_config=spyc_load($options['osdi_settings_servers']);
 
     if (isset($_POST['osdi-email'])) {
 

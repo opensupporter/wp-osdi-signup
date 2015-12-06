@@ -5,7 +5,7 @@ function osdi_get_options()
 {
     $defaults = array(
         'osdi_checkbox_logging' => true,
-        'osdi_select_field_logging' => 'Enabled'
+        'osdi_settings_logging' => 'Enabled'
     );
     $options = get_option('osdi_settings');
     $osdi_options = wp_parse_args($options, $defaults);
@@ -17,7 +17,7 @@ if (!function_exists('osdi_log')) {
     function osdi_log($message)
     {
         $options = osdi_get_options();
-        $enabled = $options['osdi_select_field_logging'] == 'Enabled';
+        $enabled = $options['osdi_settings_logging'] == 'Enabled';
         if ($enabled) {
             if (is_array($message) || is_object($message)) {
                 osdi_log_write(print_r($message, true));
